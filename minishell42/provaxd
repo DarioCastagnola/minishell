@@ -1,0 +1,9 @@
+Makefile
+execmd.c
+main.c
+main.o
+minishell
+minishell.h
+parser.c
+provaxd
+redirect.c
