@@ -6,14 +6,14 @@
 /*   By: dcastagn <dcastagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 15:43:38 by dcastagn          #+#    #+#             */
-/*   Updated: 2023/05/11 15:44:04 by dcastagn         ###   ########.fr       */
+/*   Updated: 2023/05/12 10:33:13 by dcastagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_isspace(int c)
+int	ft_isspace(int c)
 {
-	return (c == ' ') || (c == '\f') ||
-		(c == '\n') || (c == '\r') || (c == '\t') || (c == '\v');
+	return ((c == ' ') || (c == '\f')
+		|| (c == '\n') || (c == '\r') || (c == '\t') || (c == '\v'));
 }
