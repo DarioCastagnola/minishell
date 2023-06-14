@@ -24,6 +24,7 @@ void	init(char *envp[], t_pipex *pipex, int argc, char **argv)
 	}
 	save_io(pipex);
 	ft_create_envp(pipex, envp);
+	ft_shlvl(pipex);
 	path(pipex);
 	pipex->commands = 0;
 	pipex->args = 0;
