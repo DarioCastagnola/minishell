@@ -43,9 +43,9 @@
 # include "parse/parse.h"
 
 //libreria per signal
-#include "signal/signal.h"
+# include "signal/signal.h"
 
-extern int g_exitcode;
+extern int	g_exitcode;
 void	add_exitstatus(t_pipex *pipex);
 void	create_exit_status(t_pipex *pipex);
 void	free_path(t_pipex *pipex);

@@ -39,10 +39,17 @@ void	free_envp(t_pipex *pipex)
 void	ft_env(t_pipex *pipex)
 {
 	int	i;
+	int	j;
 
 	i = -1;
 	while (pipex->envp[++i])
 	{
+		j = 0;
+		while (pipex->envp[i][j])
+			j++;
+		j--;
+		if (pipex->envp[i][j] == '=')
+			continue ;
 		write(1, pipex->envp[i], ft_strlen(pipex->envp[i]));
 		write(1, "\n", 1);
 	}

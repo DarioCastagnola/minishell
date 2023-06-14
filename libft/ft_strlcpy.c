@@ -6,7 +6,7 @@
 /*   By: dfiliagg <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 10:38:41 by dfiliagg          #+#    #+#             */
-/*   Updated: 2023/01/17 11:19:37 by dfiliagg         ###   ########.fr       */
+/*   Updated: 2023/06/13 10:25:46 by adi-fort         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 		d[i] = s[i];
 		i++;
 	}
-		d[i] = 0;
+	d[i] = 0;
 	return (sl);
 }

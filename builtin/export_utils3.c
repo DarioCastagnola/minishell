@@ -27,6 +27,7 @@ void	print_mat_reverse(char **mat)
 		i--;
 	}
 }
+
 char	**create_empty_export_mat(t_pipex *pipex)
 {
 	int		i;
@@ -34,17 +35,19 @@ char	**create_empty_export_mat(t_pipex *pipex)
 	char	**mat;
 
 	i = 0;
+	if (!pipex->args)
+		return (0);
 	tmp = pipex->args;
 	while (tmp)
 	{
 		tmp = tmp->next;
 		i++;
 	}
-	mat = malloc(sizeof(char**)*i);
-	return(mat);
+	mat = malloc(sizeof(char **) * i);
+	return (mat);
 }
 
-void    print_argsexp(t_pipex *pipex)
+void	print_argsexp(t_pipex *pipex)
 {
 	t_args	*tmp;
 	int		i;
@@ -54,16 +57,17 @@ void    print_argsexp(t_pipex *pipex)
 
 	mat = create_empty_export_mat(pipex);
 	i = 0;
+	if (!pipex->args)
+		return ;
 	tmp = pipex->args;
-	while(tmp)
+	while (tmp)
 	{
 		if (ft_strcmp_args(tmp->key, "?"))
 		{
 			s = ft_strjoin(tmp->key, "=\"");
 			s2 = ft_strjoin(s, tmp->value);
 			free(s);
-			mat[i] = s2;
-			i++;
+			mat[i++] = s2;
 		}
 		tmp = tmp->next;
 	}
@@ -77,9 +81,8 @@ void	ft_blankexport(t_pipex *pipex)
 	char	*str;
 	int		i;
 
-
 	i = -1;
-	while(pipex->envp[++i])
+	while (pipex->envp[++i])
 	{
 		str = ft_strjoin("declare -x ", pipex->envp[i]);
 		printf("%s\n", str);

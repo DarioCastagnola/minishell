@@ -59,18 +59,18 @@ void	cmd_trim(char **mat)
 	while (mat[++i])
 	{
 		if (mat[i] == 0)
-			continue;
+			continue ;
 		if (mat[i][0] == '"')
 		{
-		tmp = ft_strtrim(mat[i], "\"");
-		free(mat[i]);
-		mat[i] = tmp;
+			tmp = ft_strtrim(mat[i], "\"");
+			free(mat[i]);
+			mat[i] = tmp;
 		}
 		if (mat[i][0] == '\'')
 		{
-		tmp = ft_strtrim(mat[i], "'");
-		free(mat[i]);
-		mat[i] = tmp;
+			tmp = ft_strtrim(mat[i], "'");
+			free(mat[i]);
+			mat[i] = tmp;
 		}
 	}
 }
@@ -78,17 +78,18 @@ void	cmd_trim(char **mat)
 char	*trim_red(char *s)
 {
 	char	*tmp;
+
 	if (s[0] == '"')
-		{
+	{
 		tmp = ft_strtrim(s, "\"");
 		free(s);
 		return (tmp);
-		}
-		if (s[0] == '\'')
-		{
+	}
+	if (s[0] == '\'')
+	{
 		tmp = ft_strtrim(s, "'");
 		free(s);
 		return (tmp);
-		}
-		return (s);
+	}
+	return (s);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matrix.c                                           :+:      :+:    :+:   */
+/*   export_utils4.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dfiliagg <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,47 +12,62 @@
 
 #include "../minishell.h"
 
-void	compact_fnd_qts(char *s, int *i, char c, char *s2)
+char	**remove_space_from(char **mat)
 {
-	int	j;
+	int		i;
+	int		count;
+	char	**newmat;
 
-	j = 1;
-	while (s[*i] && s[*i] != c)
+	i = -1;
+	count = 1;
+	while (mat[++i])
 	{
-		s2[j] = s[*i];
-		j++;
-		*i = *i + 1;
+		if (mat[i][0] != ' ')
+			count++;
 	}
-	s2[j] = s[*i];
-	s2[j + 1] = 0;
-	if (!s[*i])
-		*i = *i - 1;
+	newmat = malloc(sizeof(char **) * count);
+	i = -1;
+	count = 0;
+	while (mat[++i])
+	{
+		if (mat[i][0] != ' ')
+		{
+			newmat[count] = ft_strdup(mat[i]);
+			count++;
+		}
+	}
+	newmat[count] = 0;
+	free_mat(mat);
+	return (newmat);
 }
 
-char	*fnd_qts(char *s, int *i)
-{	
-	int		k;
+void	compact_mat(char **mat)
+{
+	int		i;
+	char	*tmp;
 	int		j;
-	char	*s2;
-	char	c;
 
-	j = 1;
-	k = *i;
-	c = s[k];
-	k++;
-	while (s[k] && s[k] != c)
+	i = 0;
+	while (mat[i])
+		i++;
+	i--;
+	j = i;
+	while (i > 0)
 	{
-		j++;
-		k++;
+		if (mat[i][0] != ' ' && mat[i - 1][0] != ' ')
+		{
+			tmp = ft_strjoin(mat[i - 1], mat[i]);
+			free(mat[i]);
+			free(mat[i - 1]);
+			mat[i] = ft_strdup(" ");
+			mat[i -1] = tmp;
+			i = j;
+		}
+		i--;
 	}
-	s2 = malloc(j + 2);
-	*i = *i + 1;
-	s2[0] = c;
-	compact_fnd_qts(s, i, c, s2);
-	return (s2);
 }
 
-char	**create_matrix(char	*s)
+char	**parsing_export(char *s)
 {
 	int		i;
 	char	**mat;
@@ -63,18 +78,32 @@ char	**create_matrix(char	*s)
 	mat[0] = 0;
 	while (s[++i])
 	{
-		if (s[i] == ' ')
-			continue ;
-		else if (s[i] == '<' || s[i] == '>' || s[i] == '|')
-		{
+		if (s[i] == '<' || s[i] == '>' || s[i] == '|' || s[i] == ' ')
 			mat = add_chr(mat, s[i]);
+		else if (s[i] == '\'' || s[i] == '"')
+		{
+			wrd = fnd_qts(s, &i);
+			mat = add_wrd(mat, wrd);
 			continue ;
 		}
-		else if (s[i] == '\'' || s[i] == '"')
-			wrd = fnd_qts(s, &i);
 		else
+		{
 			wrd = fnd_wrd(s, &i);
-		mat = add_wrd(mat, wrd);
+			mat = add_wrd(mat, wrd);
+		}
 	}
 	return (mat);
+}
+
+int	contain_equals(char *s)
+{
+	int	i;
+
+	i = -1;
+	while (s[++i])
+	{
+		if (s[i] == '=')
+			return (1);
+	}
+	return (0);
 }

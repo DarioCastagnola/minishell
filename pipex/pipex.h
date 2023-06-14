@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcastagn <dcastagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dfiliagg <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 09:17:05 by dfiliagg          #+#    #+#             */
-/*   Updated: 2023/06/08 14:43:29 by dcastagn         ###   ########.fr       */
+/*   Updated: 2023/03/21 09:17:08 by dfiliagg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_commands
 
 typedef struct s_init
 {
+	int				exit_builtin;
 	char			*input;
 	int				stdin;
 	int				stdout;
@@ -60,6 +61,10 @@ char	*trim_red(char *s);
 
 //pipex.c
 void	exe(t_pipex *pipex);
+int		create_child(t_commands *commands, t_pipex *pipex);
+int		exec(t_pipex *pipex, int *fd, int *pip, t_commands *commands);
+void	close_parent(int *tmp, int *fd);
+void	wait_process(int *tmp, t_commands *wp);
 
 //check_file.c
 void	create_red(t_pipex *pipex);
@@ -81,8 +86,9 @@ int		is_path(char *s);
 void	in_redirect(t_commands *command, t_pipex *pipex);
 
 //path.c
-int		find_path(t_pipex *pipex, char *key);
-void	unset_pat(t_pipex *pipex, char *key);
-void	set_path(char *s, t_pipex *pipex);
+int		exist_ambient_var(char *key, t_pipex *pipex);
+int		find_ambient_var(char *key, t_pipex *pipex);
+void	unset_ambient(char *key, t_pipex *pipex);
+void	set_ambient(char *key, char *value, t_pipex *pipex);
 
 #endif

@@ -12,83 +12,52 @@
 
 #include "../minishell.h"
 
-int	create_child(t_commands *commands, t_pipex *pipex)
+void	compact_exe(int *tmp, t_commands *wp, t_pipex *pipex)
 {
-	commands->cmd_args = create_matrix(commands->args);
-	cmd_trim(commands->cmd_args);
-	if (is_path(commands->cmd_args[0]))
-	{
-		commands->command = commands->cmd_args[0];
-		return (0);
-	}
-	commands->command = get_cmd(pipex->path, commands->cmd_args[0]);
-	if (!commands->command)
-	{
-		child_free(commands);
-		msg(ERR_CMD);
-		return (1);
-	}
-	return (0);
+	wait_process(tmp, wp);
+	close_red(pipex);
+	if (pipex->commands)
+		free_commands(pipex);
 }
 
-int	exec(t_pipex *pipex, int *fd, int *pip, t_commands *commands)
+void	compact_exe2(t_commands *commands, t_pipex *pipex, int *fd, int *tmp)
 {
-	if (commands->redout == 0 && commands->next == 0)
-		dup2(pipex->stdout, 1);
-	else if (commands->redout != 0)
-		dup2(commands->fdout, 1);	
-	else
-		dup2(pip[1], 1);
-	close(pip[1]);
-	close(pip[0]);
-	if (commands->redin == 1)
-		dup2(commands->fdin, 0);
-	else if (commands->redin == 2)
+	if (!commands->pid)
 	{
-		in_redirect(commands, pipex);
-		dup2(commands->fdin, 0);
+		ft_signal();
+		exec(pipex, tmp, fd, commands);
 	}
-	else
-		dup2(*fd, 0);
-	close(*fd);
-	if (create_child(commands, pipex) == 1)
-		exit (1);
-	execve(commands->command, commands->cmd_args, pipex->envp);
-	return (error("error: cannot execute ", commands->command));
+	if (commands->pid)
+	{
+		ft_signal();
+		close_parent(tmp, fd);
+	}
 }
 
-void	close_parent(int *tmp, int *fd)
+void	compact_exe3(t_pipex *pipex, int *fd, int *tmp)
 {
-	close(*tmp);
-	close(fd[1]);
 	*tmp = fd[0];
+	dup2(pipex->stdin, 0);
+	dup2(pipex->stdout, 1);
 }
 
-void	wait_process(int *tmp, t_commands *wp)
+void	reset_sig(void)
 {
-	close(*tmp);
-	while (wp != 0)
-	{
-		if (wp->builtin == 0 && wp->pid != -1)
-		{
-			waitpid(wp->pid, &g_exitcode, 0);
-		}
-		wp = wp->next;
-	}
+	ft_reset_signal();
+	sigaction(SIGINT, 0, 0);
+	sigaction(SIGQUIT, 0, 0);
 }
 
 void	exe(t_pipex *pipex)
 {
 	int			tmp;
 	int			fd[2];
-	t_commands  *wp;
 	t_commands	*commands;
 
 	if (!pipex->commands)
 		return ;
 	create_red(pipex);
 	tmp = dup(pipex->commands->fdin);
-	wp = pipex->commands;
 	commands = pipex->commands;
 	while (commands != 0)
 	{
@@ -96,21 +65,14 @@ void	exe(t_pipex *pipex)
 		if (commands->builtin != 0)
 		{
 			exe_builtin(pipex, &tmp, fd, commands);
-			tmp = fd[0];
-			dup2(pipex->stdin, 0);
-			dup2(pipex->stdout, 1);
+			compact_exe3(pipex, fd, &tmp);
 			commands = commands->next;
-			continue;
+			continue ;
 		}
+		reset_sig();
 		commands->pid = fork();
-		if (!commands->pid)
-			exec(pipex, &tmp, fd, commands);
-		else
-			close_parent(&tmp, fd);
+		compact_exe2(commands, pipex, fd, &tmp);
 		commands = commands->next;
 	}
-	wait_process(&tmp, wp);
-	close_red(pipex);
-	if (pipex->commands)
-		free_commands(pipex);
+	compact_exe(&tmp, pipex->commands, pipex);
 }

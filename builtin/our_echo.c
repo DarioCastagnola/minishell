@@ -17,7 +17,7 @@ void	printwoquotes(char *cmd)
 	int	i;
 
 	i = -1;
-	 while (cmd[++i])
+	while (cmd[++i])
 	{
 		if (cmd[i] == '\"')
 			while (cmd[++i] != '\"')

@@ -20,12 +20,12 @@ void	add_command(t_commands *new, t_pipex *list)
 	if (!list->commands)
 	{
 		list->commands = new;
-		return;
+		return ;
 	}
 	while (tmp->next != 0)
 		tmp = tmp->next;
 	tmp->next = new;
-	return;
+	return ;
 }
 
 void	new_commands(t_commands *com, t_pipex *list)

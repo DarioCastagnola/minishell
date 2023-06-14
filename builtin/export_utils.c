@@ -29,7 +29,7 @@ char	*mat_to_string_export(char **mat)
 		i++;
 	}
 	free(arg);
-	return(tmp);
+	return (tmp);
 }
 
 void	export_trim(char **mat)
@@ -42,15 +42,42 @@ void	export_trim(char **mat)
 	{
 		if (mat[i][0] == '"')
 		{
-		tmp = ft_strtrim(mat[i], "\"");
-		free(mat[i]);
-		mat[i] = tmp;
+			tmp = ft_strtrim(mat[i], "\"");
+			free (mat[i]);
+			mat[i] = tmp;
 		}
 		if (mat[i][0] == '\'')
 		{
-		tmp = ft_strtrim(mat[i], "'");
-		free(mat[i]);
-		mat[i] = tmp;
+			tmp = ft_strtrim(mat[i], "'");
+			free(mat[i]);
+			mat[i] = tmp;
 		}
 	}
+}
+
+void	export_mat(t_pipex *pipex, char *str)
+{
+	int		i;
+	char	**mat;
+
+	if (!str[6])
+	{
+		ft_blankexport(pipex);
+		return ;
+	}
+	i = -1;
+	mat = parsing_export_final(pipex->input, pipex);
+	while (mat[++i])
+	{
+		if (!ft_isalpha(mat[i][0]) && mat[i][0] != '_')
+		{
+			pipex->exit_builtin = 1;
+			g_exitcode = 1;
+			write(2, "Minishell: bad identifier\n", 27);
+			continue ;
+		}
+		if (contain_equals(mat[i]))
+			export_string(mat[i], pipex);
+	}
+	free_mat(mat);
 }

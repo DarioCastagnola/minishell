@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lde-mich <lde-mich@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -24,9 +24,10 @@ char	ft_strcmp(char *s1, char *s2)
 
 void	print_mat(char **mat)
 {
-	int i = -1;
+	int	i;
 
-	while(mat[++i])
+	i = -1;
+	while (mat[++i])
 	{
 		printf("%s\n", mat[i]);
 	}
@@ -50,5 +51,35 @@ char	*mat_to_string(char **mat)
 	}
 	tmp = ft_strtrim(arg, " ");
 	free(arg);
-	return(tmp);
+	return (tmp);
+}
+
+void	trim_mat(char **mat)
+{
+	char	*tmp;
+	int		i;
+
+	i = -1;
+	if (!mat)
+		return ;
+	while (mat[++i])
+	{
+		tmp = ft_strtrim(mat[i], " ");
+		free(mat[i]);
+		mat[i] = tmp;
+	}
+}
+
+int	return_builtin(char **mat, int *i)
+{
+	if (ft_strcmp_args(mat[*i], "pwd") == 0
+		|| ft_strcmp_args(mat[*i], "env") == 0
+		|| ft_strcmp_args(mat[*i], "echo") == 0
+		|| ft_strcmp_args(mat[*i], "export") == 0
+		|| ft_strcmp_args(mat[*i], "cd") == 0)
+		return (1);
+	if (ft_strcmp_args(mat[*i], "unset") == 0
+		|| ft_strcmp_args(mat[*i], "exit") == 0)
+		return (1);
+	return (0);
 }

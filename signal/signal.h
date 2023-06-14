@@ -6,13 +6,16 @@
 /*   By: adi-fort <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:44:45 by adi-fort          #+#    #+#             */
-/*   Updated: 2023/05/30 11:39:47 by adi-fort         ###   ########.fr       */
+/*   Updated: 2023/06/13 10:18:24 by adi-fort         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SIGNAL_H
 # define SIGNAL_H
 
+# include <termios.h>
+
 void	ft_signal(void);
+void	ft_reset_signal(void);
 
 #endif

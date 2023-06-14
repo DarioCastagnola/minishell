@@ -12,22 +12,6 @@
 
 #include "../minishell.h"
 
-void	var_mat(t_pipex *pipex, char **mat)
-{
-	int		i;
-	char	*tmp;
-
-	i = -1;
-	while (mat[++i])
-	{
-		if (mat[i][0] == '\'')
-			continue;
-		tmp = sost_arg(mat[i], pipex);
-		free(mat[i]);
-		mat[i] = tmp;
-	}
-}
-
 char	*get_name_var(char *s, int *i)
 {
 	char	*var;
@@ -37,11 +21,11 @@ char	*get_name_var(char *s, int *i)
 	j = *i;
 	if (s[j] == '?')
 		return (ft_strdup("?"));
-	while (s[j] && ft_isalnum(s[j]))
+	while (s[j] && s[j] != ' ')
 		j++;
 	var = malloc(j + 1);
 	j = 0;
-	while (s[*i] && ft_isalnum(s[*i]))
+	while (s[*i] && s[*i] != ' ' && s[*i] != '"')
 	{
 		var[j] = s[*i];
 		*i = *i + 1;
@@ -54,13 +38,22 @@ char	*get_name_var(char *s, int *i)
 	return (0);
 }
 
-char	*add_var2string(int *i, t_pipex *pipex, char	*s, char *new)
+char	*add_var2string(int *i, t_pipex *pipex, char *s, char *new)
 {
 	char	*key;
 	char	*value;
 
 	value = "";
 	key = get_name_var(s, i);
+	if (key && key[0] == '?' && key[1] == 0)
+	{
+		free(key);
+		value = ft_itoa(g_exitcode);
+		key = ft_strjoin(new, value);
+		free(value);
+		free(new);
+		return (key);
+	}
 	if (key != 0)
 	{
 		value = get_var(key, pipex);
@@ -69,8 +62,7 @@ char	*add_var2string(int *i, t_pipex *pipex, char	*s, char *new)
 	if (value)
 	{
 		key = ft_strjoin(new, value);
-		free(new);
-		return (key);
+		return (free(new), free(value), key);
 	}
 	return (new);
 }
@@ -89,7 +81,14 @@ char	*cpy_str(char *newstr, char s)
 	free(tmp);
 	newstr[j] = s;
 	newstr[++j] = 0;
-	return(newstr);
+	return (newstr);
+}
+
+char	*compact_sost_arg(char *newstr, int *i, char *s, t_pipex *pipex)
+{
+	newstr = add_var2string(i, pipex, s, newstr);
+	*i = *i + 1;
+	return (newstr);
 }
 
 char	*sost_arg(char *s, t_pipex *pipex)
@@ -103,18 +102,13 @@ char	*sost_arg(char *s, t_pipex *pipex)
 	{
 		if (s[i] == '$')
 		{
-			if (s[i + 1] == '?')
-			{
-				newstr = add_var2string(&i, pipex, s, newstr);
-				i++;
-			}
+			if (s[i + 1] && s[i + 1] == '?')
+				newstr = compact_sost_arg(newstr, &i, s, pipex);
 			else if (s[i + 1] && ft_isalpha(s[i + 1]))
-			{
 				newstr = add_var2string(&i, pipex, s, newstr);
-			}
-			else if (s[i + 1] && s[i + 1] >=48 && s[i + 1] <= 57 && s[i + 1])
+			else if (s[i + 1] && s[i + 1] >= 48 && s[i + 1] <= 57 && s[i + 1])
 			{
-				if(s[i + 2])
+				if (s[i + 2])
 					i += 1;
 			}
 		}

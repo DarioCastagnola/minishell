@@ -12,32 +12,6 @@
 
 #include "../minishell.h"
 
-void	*ft_realloc(void *ptr, size_t size)
-{
-	void	*new_ptr;
-
-	if (ptr)
-	{
-		if (size)
-		{
-			new_ptr = malloc(size);
-			if (!new_ptr)
-				return (NULL);
-			ft_bzero(new_ptr, size);
-			ft_memcpy(new_ptr, ptr, size);
-		}
-		else
-		{
-			new_ptr = (unsigned char *)malloc (sizeof(ptr));
-			if (!new_ptr)
-				return (NULL);
-		}
-		free(ptr);
-		return (new_ptr);
-	}
-	return ((unsigned char *)malloc(sizeof(ptr) * size));
-}
-
 int	updatingpwd(t_pipex *pipex)
 {
 	const char	*var_name;
@@ -103,7 +77,11 @@ int	find_homepath(t_pipex *pipex)
 
 	i = 0;
 	if (!pipex->envp)
+	{
+		pipex->exit_builtin = 1;
+		g_exitcode = 1;
 		return (printf("couldnt access envps\n") - 21);
+	}
 	while (pipex->envp[i])
 	{
 		if (!ft_strncmp("HOME=", pipex->envp[i], 5))
@@ -127,7 +105,7 @@ int	updatingcd(t_pipex *pipex, char **mat)
 	updatingpwd(pipex);
 	free(path);
 	path = getcwd(0, 0);
-	if (ft_strcmp(path, oldpath))
+	if (ft_strcmp(path, oldpath) || !ft_strcmp(mat[1], "."))
 	{
 		free(oldpath);
 		free(path);
@@ -137,6 +115,8 @@ int	updatingcd(t_pipex *pipex, char **mat)
 	{
 		free(oldpath);
 		free(path);
+		pipex->exit_builtin = 1;
+		g_exitcode = 1;
 		return (printf("No such file or directory\n") - 25);
 	}
 }
@@ -156,5 +136,9 @@ int	ft_cd(char **mat, t_pipex *pipex)
 		return (0);
 	}
 	else
+	{
+		pipex->exit_builtin = 1;
+		g_exitcode = 1;
 		return (printf("too many arguments\n") - 18);
+	}
 }
