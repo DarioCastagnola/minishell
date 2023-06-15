@@ -43,7 +43,7 @@ char	**create_empty_export_mat(t_pipex *pipex)
 		tmp = tmp->next;
 		i++;
 	}
-	mat = malloc(sizeof(char **) * i);
+	mat = malloc(sizeof(char **) * (i + 1));
 	return (mat);
 }
 
@@ -56,9 +56,9 @@ void	print_argsexp(t_pipex *pipex)
 	char	*s2;
 
 	mat = create_empty_export_mat(pipex);
-	i = 0;
 	if (!pipex->args)
 		return ;
+	i = -1;
 	tmp = pipex->args;
 	while (tmp)
 	{
@@ -67,11 +67,11 @@ void	print_argsexp(t_pipex *pipex)
 			s = ft_strjoin(tmp->key, "=\"");
 			s2 = ft_strjoin(s, tmp->value);
 			free(s);
-			mat[i++] = s2;
+			mat[++i] = s2;
 		}
 		tmp = tmp->next;
 	}
-	mat[i] = 0;
+	mat[++i] = 0;
 	print_mat_reverse(mat);
 	free_mat(mat);
 }
